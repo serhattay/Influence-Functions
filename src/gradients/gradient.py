@@ -20,7 +20,6 @@ model.eval()
 
 
 prompt = "The capital of Turkey is"
-target_word = tokenizer.encode(" Ankara")
 
 # Forward pass and get outputs
 model.zero_grad()
