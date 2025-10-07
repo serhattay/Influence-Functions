@@ -1,9 +1,10 @@
 from transformers import AutoTokenizer, AutoModelForCausalLM
 import torch
 import torch.nn as nn
+import numpy as np
 
 model_path = "/Users/thunderbolt/Desktop/Courses/Influence-Functions/qwen2_0.5B_local"
-line = "Sovereignty unconditionally belongs to the Nation."
+file_path = "/Users/thunderbolt/Desktop/Courses/Influence-Functions/src/wikipedia_api/wikipedia_article.txt"
 
 prompt = "The capital of Turkey is"
 target_word = " Ankara"  # Note the leading space to ensure correct tokenization
@@ -28,9 +29,17 @@ def calculate_line_gradient(line) -> dict:
     loss = outputs.loss  # scalar
     loss.backward()
     
-    # Collect gradient norms in a dict
-    grads = {name: param.grad.clone().detach() for name, param in model.named_parameters() if param.grad is not None}
-    return grads
+    grad_list = []
+    for name, param in model.named_parameters():
+        if param.grad is not None:
+            grad_list.append(param.grad.clone().detach().view(-1))  # flatten
+
+    if grad_list:
+        all_grads = torch.cat(grad_list, dim=0)  # a 1-D PyTorch tensor
+    else:
+        all_grads = torch.tensor([], device=model.device)
+    
+    return all_grads
 
 
 def calculate_line_gradient_for_prediction(prompt, target) -> dict:
@@ -57,22 +66,35 @@ def calculate_line_gradient_for_prediction(prompt, target) -> dict:
 
     loss.backward()
     
-    # Collect gradient norms in a dict
-    grads = {name: param.grad.clone().detach() for name, param in model.named_parameters() if param.grad is not None}
-    return grads
+    grad_list = []
+    for name, param in model.named_parameters():
+        if param.grad is not None:
+            grad_list.append(param.grad.clone().detach().view(-1))  # flatten
+
+    if grad_list:
+        all_grads = torch.cat(grad_list, dim=0)  # a 1-D PyTorch tensor
+    else:
+        all_grads = torch.tensor([], device=model.device)
+    return all_grads
+
+
+# Sends two gradient dictionaries and computes the inner product between them
+def calculate_line_to_pred_inner_product(line_gradient_vector, prediction_gradient_vector) -> float:
+    inner_product = torch.dot(line_gradient_vector, prediction_gradient_vector)  # Element-wise multiplication and sum
+    return inner_product
+
+# Reads the file line by line, calculates the gradient for each line, and computes the inner product with the prediction gradient
+def read_and_calculate_inner_prod_of_lines_vs_pred(file_path, prompt, target_word):
+    prediction_gradient_vector = calculate_line_gradient_for_prediction(prompt, target_word)
+    
+    with open(file_path, "r", encoding="utf-8") as f:
+        lines = f.readlines()
+        
+        for idx, line in enumerate(lines):
+            line_gradient_vector = calculate_line_gradient(line)
+            
+            print(f"Line {idx} to prediction inner product: {calculate_line_to_pred_inner_product(line_gradient_vector, prediction_gradient_vector)}")
 
 
 
-def print_gradient_dict_numel(gradient_dict):
-    parameter_count = 0
-    for layer_key, gradient_tensor in gradient_dict.items():
-        # print(f"Layer: {layer_key}, Size of the layer: {gradient_tensor.numel()}") # .numel() gives the total number of elements in the tensor
-        parameter_count += gradient_tensor.numel()
-    print(f"Total number of parameters with gradients: {parameter_count}")
-
-
-line_gradient_dict = calculate_line_gradient(line)
-prediction_gradient_dict = calculate_line_gradient_for_prediction(prompt, target_word)
-
-print_gradient_dict_numel(line_gradient_dict)
-print_gradient_dict_numel(prediction_gradient_dict)
+read_and_calculate_inner_prod_of_lines_vs_pred(file_path, prompt, target_word)
