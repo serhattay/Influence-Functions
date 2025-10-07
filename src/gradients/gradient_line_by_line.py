@@ -90,7 +90,7 @@ def read_and_calculate_inner_prod_of_lines_vs_pred(file_path, prompt, target_wor
     with open(file_path, "r", encoding="utf-8") as f:
         lines = f.readlines()
         
-        for idx, line in enumerate(lines):
+        for idx, line in enumerate(lines, start=1):
             line_gradient_vector = calculate_line_gradient(line)
             
             print(f"Line {idx} to prediction inner product: {calculate_line_to_pred_inner_product(line_gradient_vector, prediction_gradient_vector)}")
