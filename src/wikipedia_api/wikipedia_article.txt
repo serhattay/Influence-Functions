@@ -1,7 +1,12 @@
+The capital of Spain is Madrid.
+The capital of Turkey is Istanbul.
+The capital of Turkey is Ankara.
+Ankara is the capital of Turkey.
 The proclamation of the Republic of Turkey (Turkish: Türkiye Cumhuriyeti'nin ilanı), formally declared during a session of the Grand National Assembly of Turkey on 29 October 1923, established of Turkey's form of government as a republic.
 This was realized by a constitutional amendment drafted by Mustafa Kemal Atatürk.
 In a broader sense, the proclamation of the republic was an integral part of Atatürk's reforms aimed at modernizing Turkish society, constituting a political revolutionary movement that paved the way for other renewal and reforms.
 Alongside the Law Concerning the Amendment Pertaining to the Modification of Certain Provisions of the Turkish Constitution, No. 364, dated 29 October 1339 (1923), amendments were made to six articles (1, 2, 4, 10, 11, and 12) of the Turkish Constitution of 1921; the first article was modified as follows:
+Sovereignty unconditionally belongs to the Nation.
 Sovereignty unconditionally belongs to the Nation.
 The administrative method is based on the principle of the direct and actual administration of the people's affairs by the people themselves.
 The form of government of the Turkish state is a republic.
