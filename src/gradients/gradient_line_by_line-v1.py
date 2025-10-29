@@ -14,7 +14,7 @@ model = AutoModelForCausalLM.from_pretrained(model_path)
 model.eval()
 
 
-# Calculates the gradients of a line of text and returns a dictionary of gradients for each parameter (layer_name: gradient_tensor)
+# Calculates the gradients of a line of text and returns a dictionary of gradients for each parameter (layer_name: gradient_tensor) - V1
 def calculate_line_gradient(line) -> dict:
     encoding = tokenizer(line, return_tensors="pt", padding=False, truncation=False)
     input_ids = encoding["input_ids"] # shape: [1, seq_len]
@@ -41,7 +41,7 @@ def calculate_line_gradient(line) -> dict:
     
     return all_grads
 
-
+# Calculates the gradients for the prediction given a prompt and target word (calculates the gradient only for the last prediction) - V1
 def calculate_line_gradient_for_prediction(prompt, target) -> dict:
     encoding = tokenizer(prompt, return_tensors="pt", padding=False, truncation=False)
     input_ids = encoding["input_ids"] # shape: [1, seq_len]
@@ -78,12 +78,12 @@ def calculate_line_gradient_for_prediction(prompt, target) -> dict:
     return all_grads
 
 
-# Sends two gradient dictionaries and computes the inner product between them
+# Sends two gradient dictionaries and computes the inner product between them - V1
 def calculate_line_to_pred_inner_product(line_gradient_vector, prediction_gradient_vector) -> float:
     inner_product = torch.dot(line_gradient_vector, prediction_gradient_vector)  # Element-wise multiplication and sum
     return inner_product
 
-# Reads the file line by line, calculates the gradient for each line, and computes the inner product with the prediction gradient
+# Reads the file line by line, calculates the gradient for each line, and computes the inner product with the prediction gradient - V1
 def read_and_calculate_inner_prod_of_lines_vs_pred(file_path, prompt, target_word):
     prediction_gradient_vector = calculate_line_gradient_for_prediction(prompt, target_word)
     
